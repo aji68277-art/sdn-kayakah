@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDN Kayakah - Amuntai Selatan</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#FFF7ED}
+header{background:linear-gradient(90deg,#FF0000,#FF8A00,#FFD700,#16A34A,#2563EB,#7C3AED);color:white;padding:25px 15px;text-align:center;border-bottom:6px solid #FFD700}
+header h1{margin:0;font-size:32px;color:white;text-shadow:2px 2px 0 #7C3AED,4px 4px 0 rgba(0,0,0,.2);background:rgba(255,255,255,.9);color:#7C3AED;display:inline-block;padding:8px 20px;border-radius:20px}
+header p{margin:8px 0 0;font-weight:bold}
+.motto{background:white;color:#EA580C;display:inline-block;padding:6px 15px;border-radius:20px;margin-top:10px;font-weight:bold}
+.motto span:nth-child(1){color:#2563EB}.motto span:nth-child(2){color:#16A34A}.motto span:nth-child(3){color:#F97316}
+.menu{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;padding:12px;background:linear-gradient(90deg,#FFEDD5,#FEF3C7,#D1FAE5,#DBEAFE,#EDE9FE)}
+.menu button{border:none;background:white;padding:9px 12px;border-radius:20px;font-weight:bold;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.1);font-size:12px}
+.menu button.active{background:#EA580C;color:white}
+.card{background:white;margin:0 12px 12px;padding:16px;border-radius:15px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card h2{color:#EA580C;margin-top:0}
+.pill{display:inline-block;background:#FFEDD5;padding:6px 12px;border-radius:20px;margin:3px;font-size:13px}
+.guru,.siswa,.materi,.soal-box{background:#FFFBEB;padding:12px;border-radius:12px;margin-bottom:10px}
+.siswa{background:#EFF6FF}.materi{background:#EFF6FF}.soal-box{background:#F0FDF4}
+input,textarea,select{width:100%;padding:10px;margin:6px 0;border:1px solid #ddd;border-radius:10px}
+.btn{border:none;background:#EA580C;color:white;padding:12px 18px;border-radius:20px;font-weight:bold;cursor:pointer;width:100%;margin-top:8px}
+.btn-kecil{border:none;background:#16A34A;color:white;padding:8px 14px;border-radius:20px;font-weight:bold;cursor:pointer;margin:3px}
+#barInfo{display:none;background:#16A34A;color:white;text-align:center;padding:12px;position:sticky;top:0;z-index:99}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#EA580C;color:white}
+footer{text-align:center;padding:20px;color:#888;font-size:13px}
+.jejak{border-left:4px solid #EA580C;background:#FFFBEB;padding:12px;margin:0 0 10px 10px;border-radius:0 12px 12px 0}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:bold;color:white}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div id="barInfo"></div>
+<header><h1>🏫 SDN Kayakah</h1><p>Amuntai Selatan - Hulu Sungai Utara</p><div class="motto"><span>Belajar Asyik,</span> <span>Berakhlak,</span> <span>Berprestasi</span></div></header>
+<div class="menu">
+<button class="active" onclick="tampil('beranda',this)">🏠 Beranda</button>
+<button onclick="tampil('login',this)">👦 Login</button>
+<button onclick="tampil('pengumuman',this)">📢 Pengumuman</button>
+<button onclick="tampil('materi',this)">📚 Materi Perkelas</button>
+<button onclick="tampil('soal',this)">📝 Soal Perkelas</button>
+<button onclick="tampil('nilai',this)">🏆 Nilai</button>
+<button onclick="tampil('jejak',this)">📜 Rekam Jejak</button>
+<button onclick="tampil('siswa',this)">👦 Data Siswa</button>
+<button onclick="tampil('guru',this)">👩‍🏫 Guru</button>
+<button onclick="tampil('galeri',this)">📸 Galeri</button>
+</div>
+
+<div id="beranda" class="card">
+<h2>Selamat Datang di SDN Kayakah</h2>
+<p><b>Siswa:</b> Klik <b>Login</b>, pilih <b>Siswa</b>, pilih Kelas dan Nama pian. Pian hanya bisa lihat Materi / Soal kelas pian + Nilai pian sendiri.</p>
+<p><b>Guru:</b> Klik <b>Login</b>, pilih <b>Guru</b>, pilih Nama pian. Guru hanya bisa isi kelasnya sendiri, kecuali PAI dan PJOK bisa ke semua kelas.</p>
+<p><b>Kepsek (Wahyu Aji):</b> Bisa merubah semua + satu-satunya yang bisa tambah siswa baru / pindahan.</p>
+<span class="pill">🌈 60 Siswa</span> <span class="pill">✅ 7 Guru</span> <span class="pill">✅ Kelas 1 - 6</span>
+<p id="infoLogin" style="font-weight:bold;color:#EA580C"></p>
+</div>
+
+<div id="login" class="card" style="display:none">
+<h2>👦 Login - Pakai Nama Saja</h2>
+<label>Peran</label>
+<select id="loginPeran" onchange="ubahLogin()"><option value="siswa">Siswa</option><option value="guru">Guru</option><option value="kepsek">Kepala Sekolah</option></select>
+<div id="loginSiswaBox"><label>Pilih Kelas</label><select id="loginKelas" onchange="isiNamaSiswa()"><option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option><option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option></select><label>Pilih Nama</label><select id="loginNama"></select></div>
+<div id="loginGuruBox" class="hidden"><label>Pilih Nama Guru</label><select id="loginGuru"><option>Wahyu Aji</option><option>Radinah</option><option>Siti Nuriyah</option><option>Pathul Jannah</option><option>Norsalim</option><option>Syahruni</option><option>Samsul Bahri</option></select></div>
+<button class="btn" onclick="masuk()">Masuk</button>
+<button class="btn" style="background:#666" onclick="keluarLogin()">Keluar</button>
+</div>
+
+<div id="pengumuman" class="card" style="display:none"><h2>📢 Pengumuman - Semua Bisa Lihat</h2><div id="listPengumuman"><p>📌 <b>Senin, 17 November 2026:</b> Upacara bendera jam 07.30. Semua siswa pakai seragam lengkap.</p></div><div id="formPengumuman" class="hidden"><input id="isiPengumuman" placeholder="Tulis pengumuman baru..."><button class="btn" onclick="tambahPengumuman()">Tambah Pengumuman</button></div></div>
+
+<div id="materi" class="card" style="display:none"><h2>📚 Materi Pelajaran - Perkelas</h2><label>Lihat Materi Kelas:</label><select id="filterMateri" onchange="filterMateri()"><option value="semua">Semua Kelas (Guru / Kepsek)</option><option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option><option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option></select><div id="listMateri"><div class="materi" data-kelas="Kelas 1"><h3>📗 Matematika Kelas 1 - Penjumlahan</h3><p>Contoh: 2 + 3 = 5. Guru: Radinah</p></div><div class="materi" data-kelas="Kelas 3"><h3>📗 PAI Kelas 3 - Rukun Islam</h3><p>Rukun Islam ada 5. Guru: Pathul Jannah</p></div><div class="materi" data-kelas="Kelas 5"><h3>📗 Matematika Kelas 5 - Pecahan</h3><p>Contoh: 1/2 + 1/2 = 1. Guru: Syahruni</p></div><div class="materi" data-kelas="Kelas 6"><h3>📗 PJOK Kelas 6 - Gerak Dasar</h3><p>Gerak jalan, lari, lompat. Guru: Wahyu Aji</p></div></div><div id="formMateri" class="hidden"><input id="mKelas" placeholder="Kelas, misal Kelas 1"><input id="mJudul" placeholder="Judul materi"><textarea id="mIsi" placeholder="Isi materi..."></textarea><input id="mMapel" placeholder="Mapel"><button class="btn" onclick="tambahMateri()">Tambah Materi</button></div></div>
+
+<div id="soal" class="card" style="display:none"><h2>📝 Soal - Perkelas</h2><label>Lihat Soal Kelas:</label><select id="filterSoal" onchange="filterSoal()"><option value="semua">Semua Kelas (Guru / Kepsek)</option><option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option><option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option></select><div id="listSoal"><div class="soal-box" data-kelas="Kelas 1"><p><b>Kelas 1 - Soal 1: 2 + 3 = ?</b></p><label><input type="radio" name="s1" value="4"> 4</label><br><label><input type="radio" name="s1" value="5"> 5</label><br><label><input type="radio" name="s1" value="6"> 6</label><br><button class="btn-kecil" onclick="cekSoal('s1','5',this)">Cek Jawaban</button><p class="hasil"></p></div></div><div id="formSoal" class="hidden"><input id="soKelas" placeholder="Kelas, misal Kelas 2"><input id="soTanya" placeholder="Tulis soal"><input id="soA" placeholder="Pilihan A"><input id="soB" placeholder="Pilihan B"><input id="soC" placeholder="Pilihan C"><input id="soKunci" placeholder="Jawaban benar"><button class="btn" onclick="tambahSoal()">Tambah Soal</button></div></div>
+
+<div id="nilai" class="card" style="display:none"><h2>🏆 Nilai - Perkelas</h2><p>Siswa hanya bisa lihat nilainya sendiri. Guru hanya bisa lihat kelasnya sendiri. PAI / PJOK bisa lihat semua kelas. Kepsek bisa lihat semua.</p><label>Filter Kelas:</label><select id="filterNilai" onchange="filterNilai()"><option value="semua">Semua Kelas</option><option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option><option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option></select><table><thead><tr><th>Nama</th><th>Kelas</th><th>Mapel</th><th>Nilai</th><th>Ket</th></tr></thead><tbody id="listNilai"></tbody></table><div id="formNilai" class="hidden"><input id="nNama" placeholder="Nama Siswa"><select id="nKelas"><option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option><option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option></select><input id="nMapel" placeholder="Mapel"><input id="nAngka" type="number" placeholder="Nilai"><input id="nKet" placeholder="Keterangan"><button class="btn" onclick="tambahNilai()">Tambah Nilai</button></div></div>
+
+<div id="jejak" class="card" style="display:none"><h2>📜 Rekam Jejak - Semua Bisa Lihat</h2><div id="listJejak"><div class="jejak"><span class="badge" style="background:#16A34A">CONTOH</span> <b>Rekam Jejak</b><br>Diisi oleh Guru / Kepsek. Contoh: Masuk sekolah, naik kelas, juara lomba, catatan guru.</div></div><div id="formJejak" class="hidden"><input id="jNama" placeholder="Nama Siswa"><input id="jTanggal" placeholder="Tanggal"><input id="jJudul" placeholder="Judul"><textarea id="jDetail" placeholder="Detail lengkap..."></textarea><button class="btn" onclick="tambahJejak()">Tambah Rekam Jejak</button></div></div>
+
+<div id="siswa" class="card" style="display:none"><h2>👦 Data Siswa - 60 Orang</h2><input id="cariSiswa" placeholder="🔍 Cari nama..." onkeyup="cariSiswa()"><div id="listSiswa"></div><div id="formSiswaBaru" class="hidden" style="background:#FEF2F2;padding:12px;border-radius:12px;border:2px solid #DC2626"><h3>➕ Tambah Siswa Baru / Pindahan - HANYA KEPSEK</h3><input id="bNama" placeholder="Nama Lengkap"><select id="bKelas"><option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option><option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option></select><button class="btn" style="background:#DC2626" onclick="tambahSiswaBaru()">Tambah Siswa Baru</button></div></div>
+
+<div id="guru" class="card" style="display:none"><h2>👩‍🏫 Guru - 7 Orang</h2><div class="guru"><b>Wahyu Aji, S.Pd.Jas</b><br>Jabatan: Kepala Sekolah + PJOK<br>Bisa: Semua kelas, semua menu, tambah siswa baru</div><div class="guru"><b>Radinah, S.Pd</b><br>Jabatan: Guru Kelas 1</div><div class="guru"><b>Siti Nuriyah, S.Pd.SD</b><br>Jabatan: Guru Kelas 2</div><div class="guru"><b>Pathul Jannah, S.Pd.I</b><br>Jabatan: Guru PAI + Wali Kelas 3<br>Bisa: PAI semua kelas + semua pelajaran Kelas 3</div><div class="guru"><b>Norsalim, S.Pd</b><br>Jabatan: Guru Kelas 4</div><div class="guru"><b>Syahruni, S.Pd.SD</b><br>Jabatan: Guru Kelas 5</div><div class="guru"><b>Samsul Bahri, S.Pd</b><br>Jabatan: Guru Kelas 6</div></div>
+
+<div id="galeri" class="card" style="display:none"><h2>📸 Galeri - Semua Bisa Lihat</h2><div id="listGaleri"><div><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80" style="width:100%;border-radius:12px"><p>Belajar di kelas - SDN Kayakah</p></div></div><div id="formGaleri" class="hidden"><input type="file" accept="image/*" onchange="tambahFoto(event)"></div></div>
+
+<footer>© 2026 SDN Kayakah - Amuntai Selatan - Belajar Asyik, Berakhlak, Berprestasi</footer>
+<script>
+var DATA={
+"Kelas 1":["Aida Salsabila","Fatimah Azzahra","Mahrini","Muhammad Latif","Muhammad Luthfi","Muhammad Nafis Al Ikhwan","Muhammad Zulkifli","Rahmawati","Salsabila Ayu Hanifa","Wirda Aulia"],
+"Kelas 2":["Ahmad Riduan","Ahmad Yasir","Ahmad Zainul Majerdi","Eirlangga Saputra","Humaira Munawwarah","Nadia","Nazril Kamari","Via Anggraini"],
+"Kelas 3":["Ahmad Fazrianur","Ahmad Jailani","Arsita","Jaki Habibi","Maria Ulfah","Muhammad Baihaki","Muhammad Rijani","Mutiara Anastasya","Naira Amelia Ulfa","Nia Ramadhani","Novita"],
+"Kelas 4":["Asyifa Putri Aura Zaskia","Hadi Rahman","M. Nafis Mubarak","Muhammad Al Farisqi","Muhammad Fauzi Akbar","Muhammad Salman Al-Farisy","Nafisya Azzahrah","Naura Aqila Wilda","Nayla Amanda","Nor Azizah Mutahharah"],
+"Kelas 5":["Abdul Karim","Ahmad Badali","Alika Naila Putri","Ikrimah","Ilmina","Iqbal Al Jailani","Khanza Alifia","M. Ajrul Ilmi","Muhammad Habil","Muhammad Zakaria","Muslimah","Nurlatifah"],
+"Kelas 6":["Ifdhal","M. Nafis Ihsan","M. Rizalul Fikri","M. Zaidan Akmal","Muhammad Maulana","Nazwa","Nikmah","Siti Fatimatuz Zahra","Siti Rahmah"]
+};
+var GURU_KELAS={"Radinah":"Kelas 1","Siti Nuriyah":"Kelas 2","Pathul Jannah":"Kelas 3","Norsalim":"Kelas 4","Syahruni":"Kelas 5","Samsul Bahri":"Kelas 6"};
+var user=null;
+function tampil(id,btn){document.querySelectorAll('.card').forEach(c=>c.style.display='none');document.getElementById(id).style.display='block';document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');}
+function ubahLogin(){var p=document.getElementById('loginPeran').value;document.getElementById('loginSiswaBox').classList.toggle('hidden',p!=='siswa');document.getElementById('loginGuruBox').classList.toggle('hidden',p==='siswa');if(p==='siswa')isiNamaSiswa();}
+function isiNamaSiswa(){var k=document.getElementById('loginKelas').value;var sel=document.getElementById('loginNama');sel.innerHTML='';(DATA[k]||[]).forEach(n=>{var o=document.createElement('option');o.text=n;sel.appendChild(o);});}
+function renderSiswa(){var div=document.getElementById('listSiswa');div.innerHTML='';Object.keys(DATA).forEach(k=>{DATA[k].forEach(n=>{var d=document.createElement('div');d.className='siswa';d.setAttribute('data-nama',n);d.setAttribute('data-kelas',k);d.innerHTML='<b>'+n+'</b><br>Kelas: '+k;div.appendChild(d);});});}
+function cariSiswa(){var q=document.getElementById('cariSiswa').value.toLowerCase();document.querySelectorAll('#listSiswa .siswa').forEach(s=>{s.style.display=s.innerText.toLowerCase().includes(q)?'block':'none';});}
+function masuk(){
+var peran=document.getElementById('loginPeran').value;
+if(peran==='kepsek'){user={peran:'kepsek',nama:'Wahyu Aji'};}
+else if(peran==='guru'){var g=document.getElementById('loginGuru').value;if(g==='Wahyu Aji'){user={peran:'kepsek',nama:g};}else{user={peran:'guru',nama:g,kelas:GURU_KELAS[g]};}}
+else{var k=document.getElementById('loginKelas').value;var n=document.getElementById('loginNama').value;user={peran:'siswa',nama:n,kelas:k};}
+document.getElementById('infoLogin').innerText='Login sebagai: '+user.nama+' - '+user.peran.toUpperCase()+(user.kelas?' - '+user.kelas:'');
+var bar=document.getElementById('barInfo');bar.style.display='block';bar.innerText='Login: '+user.nama+' ('+user.peran+') '+(user.kelas||'');
+aturForm();filterMateri();filterSoal();filterNilai();alert('Selamat datang, '+user.nama+'!');tampil('beranda',document.querySelector('.menu button'));
+}
+function keluarLogin(){user=null;document.getElementById('infoLogin').innerText='';document.getElementById('barInfo').style.display='none';aturForm();alert('Sudah keluar.');}
+function aturForm(){
+var isGuru=user&&(user.peran==='guru'||user.peran==='kepsek');
+var isKepsek=user&&user.peran==='kepsek';
+['formPengumuman','formMateri','formSoal','formNilai','formJejak','formGaleri'].forEach(id=>{document.getElementById(id).classList.toggle('hidden',!isGuru);});
+document.getElementById('formSiswaBaru').classList.toggle('hidden',!isKepsek);
+if(user&&user.peran==='siswa'){document.getElementById('filterMateri').value=user.kelas;document.getElementById('filterSoal').value=user.kelas;document.getElementById('filterNilai').value=user.kelas;}
+}
+function bisaKelas(kelas){
+if(!user) return true;
+if(user.peran==='kepsek') return true;
+if(user.peran==='siswa') return user.kelas===kelas;
+if(user.peran==='guru'){if(user.nama==='Pathul Jannah') return true; return user.kelas===kelas;}
+return false;
+}
+function filterMateri(){document.querySelectorAll('#listMateri .materi').forEach(m=>{var k=m.getAttribute('data-kelas');var f=document.getElementById('filterMateri').value;var tampilkan=(f==='semua'||f===k)&&bisaKelas(k);m.style.display=tampilkan?'block':'none';});}
+function filterSoal(){document.querySelectorAll('#listSoal .soal-box').forEach(m=>{var k=m.getAttribute('data-kelas');var f=document.getElementById('filterSoal').value;var tampilkan=(f==='semua'||f===k)&&bisaKelas(k);m.style.display=tampilkan?'block':'none';});}
+function filterNilai(){var f=document.getElementById('filterNilai').value;document.querySelectorAll('#listNilai tr').forEach(r=>{var k=r.getAttribute('data-kelas');var nama=r.getAttribute('data-nama');var ok=true;if(user&&user.peran==='siswa') ok=(nama===user.nama);else if(user&&user.peran==='guru'&&user.nama!=='Pathul Jannah') ok=(k===user.kelas);if(f!=='semua'&&k!==f) ok=false;r.style.display=ok?'':'none';});}
+function cekSoal(nama,kunci,btn){var p=document.querySelector('input[name="'+nama+'"]:checked');var h=btn.parentElement.querySelector('.hasil');if(!p){h.innerText='Pilih dulu jawabannya!';return;}if(p.value===kunci){h.innerText='✅ BENAR! Hebat! Nilai 100';h.style.color='green';}else{h.innerText='❌ Salah. Coba lagi!';h.style.color='red';}}
+function tambahPengumuman(){var t=document.getElementById('isiPengumuman').value;if(!t)return;var p=document.createElement('p');p.innerHTML='📌 '+t;document.getElementById('listPengumuman').appendChild(p);document.getElementById('isiPengumuman').value='';}
+function tambahMateri(){var k=document.getElementById('mKelas').value;var j=document.getElementById('mJudul').value;var isi=document.getElementById('mIsi').value;var mp=document.getElementById('mMapel').value;if(!k||!j)return alert('Isi kelas dan judul!');if(!bisaKelas(k))return alert('Pian hanya bisa isi kelas pian sendiri! Kecuali PAI / PJOK / Kepsek.');var d=document.createElement('div');d.className='materi';d.setAttribute('data-kelas',k);d.innerHTML='<h3>📗 '+j+'</h3><p>'+isi+'</p><p>Mapel: '+mp+' - Guru: '+(user?user.nama:'')+'</p>';document.getElementById('listMateri').appendChild(d);filterMateri();}
+var noSoal=100;
+function tambahSoal(){var k=document.getElementById('soKelas').value;var t=document.getElementById('soTanya').value;var a=document.getElementById('soA').value;var b=document.getElementById('soB').value;var c=document.getElementById('soC').value;var ku=document.getElementById('soKunci').value;if(!k||!t)return alert('Isi kelas dan soal!');if(!bisaKelas(k))return alert('Pian hanya bisa isi kelas pian sendiri!');noSoal++;var nm='s'+noSoal;var d=document.createElement('div');d.className='soal-box';d.setAttribute('data-kelas',k);d.innerHTML='<p><b>'+k+' - '+t+'</b></p><label><input type="radio" name="'+nm+'" value="'+a+'"> '+a+'</label><br><label><input type="radio" name="'+nm+'" value="'+b+'"> '+b+'</label><br><label><input type="radio" name="'+nm+'" value="'+c+'"> '+c+'</label><br><button class="btn-kecil" onclick="cekSoal(\''+nm+'\',\''+ku+'\',this)">Cek Jawaban</button><p class="hasil"></p>';document.getElementById('listSoal').appendChild(d);filterSoal();}
+function tambahNilai(){var n=document.getElementById('nNama').value;var k=document.getElementById('nKelas').value;var mp=document.getElementById('nMapel').value;var ang=document.getElementById('nAngka').value;var ket=document.getElementById('nKet').value;if(!n||!mp)return alert('Isi nama dan mapel!');if(!bisaKelas(k))return alert('Pian hanya bisa isi nilai kelas pian sendiri! Kecuali PAI / PJOK / Kepsek.');var tr=document.createElement('tr');tr.setAttribute('data-kelas',k);tr.setAttribute('data-nama',n);tr.innerHTML='<td>'+n+'</td><td>'+k+'</td><td>'+mp+'</td><td><b>'+ang+'</b></td><td>'+ket+'</td>';document.getElementById('listNilai').appendChild(tr);filterNilai();}
+function tambahJejak(){var n=document.getElementById('jNama').value;var t=document.getElementById('jTanggal').value;var j=document.getElementById('jJudul').value;var d=document.getElementById('jDetail').value;if(!n||!j)return alert('Isi nama dan judul!');var div=document.createElement('div');div.className='jejak';div.innerHTML='<span class="badge" style="background:#2563EB">REKAM JEJAK</span> <b>'+n+'</b><br><b>Tanggal:</b> '+t+'<br><b>Detail:</b> '+j+' - '+d;document.getElementById('listJejak').appendChild(div);}
+function tambahFoto(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){var div=document.createElement('div');div.innerHTML='<img src="'+ev.target.result+'" style="width:100%;border-radius:12px"><p>Foto baru - SDN Kayakah</p>';document.getElementById('listGaleri').appendChild(div);};r.readAsDataURL(f);}
+function tambahSiswaBaru(){if(!user||user.peran!=='kepsek'){alert('Hanya Kepsek yang bisa tambah siswa baru!');return;}var n=document.getElementById('bNama').value;var k=document.getElementById('bKelas').value;if(!n)return alert('Isi nama!');DATA[k].push(n);renderSiswa();isiNamaSiswa();alert('Siswa baru '+n+' masuk '+k+'!');}
+isiNamaSiswa();renderSiswa();aturForm();
+</script>
+</body>
+</html>
