@@ -449,6 +449,12 @@ function tambahJejak(){var n=document.getElementById('jNama').value;var t=docume
 function tambahFoto(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){var div=document.createElement('div');div.innerHTML='<img src="'+ev.target.result+'" style="width:100%;border-radius:16px;border:3px solid #FFD700"><p>Foto baru - SDN Kayakah 🌈</p><div class="edit-tools" style="display:block"><button class="btn-hapus" onclick="hapusEl(this)">🗑️ Hapus Foto</button></div>';document.getElementById('listGaleri').appendChild(div);};r.readAsDataURL(f);}
 function tambahSiswaBaru(){if(!isKepsek()){alert('Hanya Kepsek!');return;}var n=document.getElementById('bNama').value;var k=document.getElementById('bKelas').value;if(!n)return alert('Isi nama!');DATA[k].push(n);renderSiswa();renderKelolaAkun();alert('Siswa baru '+n+' masuk '+k+'! Kode & sandi baru ini RAHASIA, hanya Kepsek yang tahu di Kelola Akun. Kasih tahu ke muridnya langsung, jangan diumumkan di grup.');}
 renderSiswa();renderGuru();updateJumlah();aturForm();
+  user={peran:'tamu',nama:'Tamu',kelas:''};
+function bisaKelas(kelas){return true;}
+document.getElementById('loginPage').style.display='none';
+document.getElementById('mainApp').style.display='block';
+document.getElementById('infoLogin').innerText='Halo, Selamat Datang di SDN Kayakah 🌈';
+aturForm();filterMateri();filterSoal();filterNilai();renderSiswa();renderGuru();
 </script>
 </body>
 </html>
